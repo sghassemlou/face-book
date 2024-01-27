@@ -14,6 +14,7 @@
 		4C41EB642B658476004A192B /* face_bookTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C41EB632B658476004A192B /* face_bookTests.swift */; };
 		4C41EB6E2B658476004A192B /* face_bookUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C41EB6D2B658476004A192B /* face_bookUITests.swift */; };
 		4C41EB702B658476004A192B /* face_bookUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C41EB6F2B658476004A192B /* face_bookUITestsLaunchTests.swift */; };
+		F59203652B65B03200FB18BB /* SwiftWhisper in Frameworks */ = {isa = PBXBuildFile; productRef = F59203642B65B03200FB18BB /* SwiftWhisper */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F59203652B65B03200FB18BB /* SwiftWhisper in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -135,6 +137,9 @@
 			dependencies = (
 			);
 			name = "face-book";
+			packageProductDependencies = (
+				F59203642B65B03200FB18BB /* SwiftWhisper */,
+			);
 			productName = "face-book";
 			productReference = 4C41EB4D2B658473004A192B /* face-book.app */;
 			productType = "com.apple.product-type.application";
@@ -207,6 +212,9 @@
 				Base,
 			);
 			mainGroup = 4C41EB442B658473004A192B;
+			packageReferences = (
+				F59203632B65B03200FB18BB /* XCRemoteSwiftPackageReference "SwiftWhisper" */,
+			);
 			productRefGroup = 4C41EB4E2B658473004A192B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -584,6 +592,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		F59203632B65B03200FB18BB /* XCRemoteSwiftPackageReference "SwiftWhisper" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/exPHAT/SwiftWhisper.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F59203642B65B03200FB18BB /* SwiftWhisper */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F59203632B65B03200FB18BB /* XCRemoteSwiftPackageReference "SwiftWhisper" */;
+			productName = SwiftWhisper;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4C41EB452B658473004A192B /* Project object */;
 }
