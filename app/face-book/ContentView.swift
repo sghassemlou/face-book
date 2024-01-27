@@ -19,17 +19,27 @@ struct ContentView: View {
                     .frame(height: geo.size.height * (1/2))
                     .cornerRadius(25.0)
                     .padding()
-                    
+
+            
                 VStack{
+                    Button (action: sayHi) {
+                        Image(systemName: "camera.rotate.fill")
+                            .frame(width: 52, height: 52)
+                            .foregroundColor(.white)
+                            .background(.gray)
+                            .cornerRadius(10)
+                            .imageScale(.medium)
+                            
+                    }
                     Text("hello world.")
                         .font(.system(size: 25, weight: .regular, design: .rounded))
                 }.frame(height: geo.size.height * (1/2))
             }
         }
+    }
 
-
-        
-        // HostedViewController().padding()
+    private func sayHi() {
+        print("hi")
     }
 }
 

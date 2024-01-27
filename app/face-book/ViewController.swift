@@ -22,7 +22,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         
         sessionQueue.async { [unowned self] in
             guard permissionGranted else { return }
-            self.setupCaptureSession()
+            self.setupCaptureSession(camera_idx: 0)
             self.captureSession.startRunning()
         }
     }
@@ -50,7 +50,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         }
     }
     
-    func setupCaptureSession() {
+    func setupCaptureSession(camera_idx: Int) {
         // Camera input
         // guard let videoDevice = AVCaptureDevice.default(.builtInDualWideCamera,for: .video, position: .back) else { return }
         // use the default camera
@@ -62,7 +62,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             .builtInUltraWideCamera, .builtInWideAngleCamera
         ], mediaType: .video, position: .unspecified).devices
         if devices.isEmpty { return }
-        let videoDevice = devices[0]
+        let videoDevice = devices[camera_idx]
 
         // debug print all device names
         for device in devices {
