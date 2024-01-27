@@ -54,13 +54,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         }
     }
     
-    func setupCaptureSession() {
-        // Camera input
-        // guard let videoDevice = AVCaptureDevice.default(.builtInDualWideCamera,for: .video, position: .back) else { return }
-        // use the default camera
-        // guard let videoDevice = AVCaptureDevice.default(for: .video) else { return }
-
-        // list all devices
+    func setupVideoInput() {
+        
         let devices = AVCaptureDevice.DiscoverySession(deviceTypes: [
             .builtInDualCamera, .builtInTripleCamera, .builtInTelephotoCamera, .builtInDualWideCamera,
             .builtInUltraWideCamera, .builtInWideAngleCamera
@@ -68,22 +63,22 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         if devices.isEmpty { return }
         camera_idx = (camera_idx + 1) % devices.count
         let videoDevice = devices[camera_idx]
-        print("initialising with camera ", camera_idx)
-
-//        // debug print all device names
-//        for device in devices {
-//            print(device.localizedName)
-//            print(device.description)
-//        }
-        print("part 1")
+        
+        print("initialising with camera: ", videoDevice.localizedName)
 
         guard let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice) else { return }
-        print("part 2")
+        
+        for input in captureSession.inputs {
+            captureSession.removeInput(input)
+        }
 
         guard captureSession.canAddInput(videoDeviceInput) else { return }
-        print("part 3")
-
         captureSession.addInput(videoDeviceInput)
+    }
+    
+    func setupCaptureSession() {
+        // Camera input
+        setupVideoInput()
                          
         // Preview layer
         previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
@@ -91,8 +86,10 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         
         // Detector
         videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "sampleBufferQueue"))
+        
+        guard captureSession.canAddOutput(videoOutput) else { return }
         captureSession.addOutput(videoOutput)
-        print("eee")
+
         // Updates to UI must be on main queue
         DispatchQueue.main.async { [weak self] in
             self!.previewLayer.frame = self!.view.frame
