@@ -21,7 +21,8 @@ struct ContentView: View {
                     .padding()
                     
                 VStack{
-                    Text("hello world")
+                    Text("hello world.")
+                        .font(.system(size: 25, weight: .regular, design: .rounded))
                 }.frame(height: geo.size.height * (1/2))
             }
         }
