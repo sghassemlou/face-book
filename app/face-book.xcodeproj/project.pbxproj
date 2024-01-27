@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4C308F492B65945100121C21 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C308F482B65945100121C21 /* ViewController.swift */; };
 		4C41EB512B658473004A192B /* face_bookApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C41EB502B658473004A192B /* face_bookApp.swift */; };
 		4C41EB532B658473004A192B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C41EB522B658473004A192B /* ContentView.swift */; };
 		4C41EB572B658476004A192B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C41EB562B658476004A192B /* Assets.xcassets */; };
@@ -33,6 +34,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4C308F482B65945100121C21 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		4C41EB4D2B658473004A192B /* face-book.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "face-book.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C41EB502B658473004A192B /* face_bookApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = face_bookApp.swift; sourceTree = "<group>"; };
 		4C41EB522B658473004A192B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -95,6 +97,7 @@
 				4C41EB502B658473004A192B /* face_bookApp.swift */,
 				4C41EB522B658473004A192B /* ContentView.swift */,
 				4C41EB562B658476004A192B /* Assets.xcassets */,
+				4C308F482B65945100121C21 /* ViewController.swift */,
 			);
 			path = "face-book";
 			sourceTree = "<group>";
@@ -245,6 +248,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C308F492B65945100121C21 /* ViewController.swift in Sources */,
 				4C41EB532B658473004A192B /* ContentView.swift in Sources */,
 				4C41EB512B658473004A192B /* face_bookApp.swift in Sources */,
 			);
@@ -414,6 +418,7 @@
 				DEVELOPMENT_TEAM = GS6MGJ8DBS;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "App uses camera to detect faces.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -445,6 +450,7 @@
 				DEVELOPMENT_TEAM = GS6MGJ8DBS;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "App uses camera to detect faces.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
