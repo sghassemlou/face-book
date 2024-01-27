@@ -1,6 +1,15 @@
 {
   "pins" : [
     {
+      "identity" : "openai",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/FuturraGroup/OpenAI.git",
+      "state" : {
+        "revision" : "ea017bef7e24bcf3c7b9668abeb2585b74ca2da3",
+        "version" : "1.8.0"
+      }
+    },
+    {
       "identity" : "swiftwhisper",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/exPHAT/SwiftWhisper.git",
