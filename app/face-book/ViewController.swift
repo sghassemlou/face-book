@@ -15,14 +15,18 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     private var videoOutput = AVCaptureVideoDataOutput()
     var requests = [VNRequest]()
     var detectionLayer: CALayer! = nil
+    var camera_idx: Int = -1
     
       
     override func viewDidLoad() {
         checkPermission()
-        
+        setup()
+    }
+    
+    public func setup() {
         sessionQueue.async { [unowned self] in
             guard permissionGranted else { return }
-            self.setupCaptureSession(camera_idx: 0)
+            self.setupCaptureSession()
             self.captureSession.startRunning()
         }
     }
@@ -50,7 +54,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         }
     }
     
-    func setupCaptureSession(camera_idx: Int) {
+    func setupCaptureSession() {
         // Camera input
         // guard let videoDevice = AVCaptureDevice.default(.builtInDualWideCamera,for: .video, position: .back) else { return }
         // use the default camera
@@ -62,13 +66,15 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             .builtInUltraWideCamera, .builtInWideAngleCamera
         ], mediaType: .video, position: .unspecified).devices
         if devices.isEmpty { return }
+        camera_idx = (camera_idx + 1) % devices.count
         let videoDevice = devices[camera_idx]
+        print("initialising with camera ", camera_idx)
 
-        // debug print all device names
-        for device in devices {
-            print(device.localizedName)
-            print(device.description)
-        }
+//        // debug print all device names
+//        for device in devices {
+//            print(device.localizedName)
+//            print(device.description)
+//        }
 
         guard let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice) else { return }
            
@@ -92,9 +98,12 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
 }
 
+var vc: ViewController! = nil;
+
 struct HostedViewController: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
-        return ViewController()
+        vc = ViewController()
+        return vc
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
