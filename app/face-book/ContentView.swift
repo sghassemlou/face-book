@@ -24,7 +24,7 @@ struct ContentView: View {
 
             
                 VStack{
-                    Button (action: sayHi) {
+                    Button (action: toggleCam) {
                         Image(systemName: "camera.rotate.fill")
                             .frame(width: 52, height: 52)
                             .foregroundColor(.white)
@@ -40,8 +40,8 @@ struct ContentView: View {
         }
     }
 
-    private func sayHi() {
-        vc.setup()
+    private func toggleCam() {
+        vc.setupVideoInput()
     }
 }
 
