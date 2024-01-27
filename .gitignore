@@ -1,3 +1,4 @@
 *.xcuserstate
 *.ipynb
 *.DS_Store
+.env
