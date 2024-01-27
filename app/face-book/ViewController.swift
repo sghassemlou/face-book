@@ -75,10 +75,14 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
 //            print(device.localizedName)
 //            print(device.description)
 //        }
+        print("part 1")
 
         guard let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice) else { return }
-           
+        print("part 2")
+
         guard captureSession.canAddInput(videoDeviceInput) else { return }
+        print("part 3")
+
         captureSession.addInput(videoDeviceInput)
                          
         // Preview layer
@@ -88,12 +92,12 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         // Detector
         videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "sampleBufferQueue"))
         captureSession.addOutput(videoOutput)
-        
-        
+        print("eee")
         // Updates to UI must be on main queue
         DispatchQueue.main.async { [weak self] in
             self!.previewLayer.frame = self!.view.frame
             self!.view.layer.addSublayer(self!.previewLayer)
+            print(self!.view.layer.sublayers!)
         }
     }
 }
