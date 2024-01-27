@@ -23,10 +23,6 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         sessionQueue.async { [unowned self] in
             guard permissionGranted else { return }
             self.setupCaptureSession()
-            
-//            self.setupLayers()
-//            self.setupDetector()
-            
             self.captureSession.startRunning()
         }
     }
@@ -63,7 +59,12 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         captureSession.addInput(videoDeviceInput)
                          
         // Preview layer
-        screenRect = UIScreen.main.bounds
+
+        // // display over the full screen
+        // screenRect = UIScreen.main.bounds
+
+         // display filling the top part of the screen
+         screenRect = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height/2)
         
         previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         previewLayer.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
@@ -86,8 +87,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
 struct HostedViewController: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
         return ViewController()
-        }
+    }
 
-        func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-        }
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+    }
 }
