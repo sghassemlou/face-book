@@ -31,35 +31,6 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         }
     }
     
-//    override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
-//        screenRect = UIScreen.main.bounds
-//        self.previewLayer.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
-//
-//        switch UIDevice.current.orientation {
-//            // Home button on top
-//            case UIDeviceOrientation.portraitUpsideDown:
-//                self.previewLayer.connection?.videoOrientation = .portraitUpsideDown
-//             
-//            // Home button on right
-//            case UIDeviceOrientation.landscapeLeft:
-//                self.previewLayer.connection?.videoOrientation = .landscapeRight
-//            
-//            // Home button on left
-//            case UIDeviceOrientation.landscapeRight:
-//                self.previewLayer.connection?.videoOrientation = .landscapeLeft
-//             
-//            // Home button at bottom
-//            case UIDeviceOrientation.portrait:
-//                self.previewLayer.connection?.videoOrientation = .portrait
-//                
-//            default:
-//                break
-//            }
-//        
-//        // Detector
-//        updateLayers()
-//    }
-    
     func checkPermission() {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
             // Permission has been granted before
