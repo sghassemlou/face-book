@@ -59,10 +59,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         captureSession.addInput(videoDeviceInput)
                          
         // Preview layer
-
         previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-        previewLayer.frame = view.frame
-        previewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill // Fill screen
+        previewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
         
         // Detector
         videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "sampleBufferQueue"))
@@ -71,6 +69,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         
         // Updates to UI must be on main queue
         DispatchQueue.main.async { [weak self] in
+            self!.previewLayer.frame = self!.view.frame
             self!.view.layer.addSublayer(self!.previewLayer)
         }
     }
