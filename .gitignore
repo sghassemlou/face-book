@@ -2,3 +2,4 @@
 *.ipynb
 *.DS_Store
 .env
+app/face-book.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
