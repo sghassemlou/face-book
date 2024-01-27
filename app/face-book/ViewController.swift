@@ -61,7 +61,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         // Preview layer
 
         previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-        previewLayer.frame = view.bounds
+        previewLayer.frame = view.frame
         previewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill // Fill screen
         
         // Detector

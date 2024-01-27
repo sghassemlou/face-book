@@ -15,10 +15,13 @@ struct ContentView: View {
         // rounded rect taking up the top half of the screen with padding
         GeometryReader{ geo in
             VStack{
-                HostedViewController().frame(height: geo.size.height * (1/2))
-                Divider()
+                HostedViewController()
+                    .frame(height: geo.size.height * (1/2))
+                    .cornerRadius(25.0)
+                    .padding()
+                    
                 VStack{
-                    Text("bbbbbbbbbb\nbbbbbbbbbb\nbbbbbbbbbb")
+                    Text("hello world")
                 }.frame(height: geo.size.height * (1/2))
             }
         }
