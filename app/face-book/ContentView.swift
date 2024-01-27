@@ -10,12 +10,14 @@ import SwiftData
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
+    
+    var viewControl = HostedViewController()
 
     var body: some View {
         // rounded rect taking up the top half of the screen with padding
         GeometryReader{ geo in
             VStack{
-                HostedViewController()
+                viewControl
                     .frame(height: geo.size.height * (1/2))
                     .cornerRadius(25.0)
                     .padding()
@@ -27,8 +29,8 @@ struct ContentView: View {
                             .frame(width: 52, height: 52)
                             .foregroundColor(.white)
                             .background(.gray)
-                            .cornerRadius(10)
-                            .imageScale(.medium)
+                            .cornerRadius(15)
+                            .imageScale(.large)
                             
                     }
                     Text("hello world.")
@@ -39,7 +41,7 @@ struct ContentView: View {
     }
 
     private func sayHi() {
-        print("hi")
+        vc.setup()
     }
 }
 
