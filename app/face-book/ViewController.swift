@@ -52,7 +52,24 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     
     func setupCaptureSession() {
         // Camera input
-        guard let videoDevice = AVCaptureDevice.default(.builtInDualWideCamera,for: .video, position: .back) else { return }
+        // guard let videoDevice = AVCaptureDevice.default(.builtInDualWideCamera,for: .video, position: .back) else { return }
+        // use the default camera
+        // guard let videoDevice = AVCaptureDevice.default(for: .video) else { return }
+
+        // list all devices
+        let devices = AVCaptureDevice.DiscoverySession(deviceTypes: [
+            .builtInDualCamera, .builtInTripleCamera, .builtInTelephotoCamera, .builtInDualWideCamera,
+            .builtInUltraWideCamera, .builtInWideAngleCamera
+        ], mediaType: .video, position: .unspecified).devices
+        if devices.isEmpty { return }
+        let videoDevice = devices[0]
+
+        // debug print all device names
+        for device in devices {
+            print(device.localizedName)
+            print(device.description)
+        }
+
         guard let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice) else { return }
            
         guard captureSession.canAddInput(videoDeviceInput) else { return }
