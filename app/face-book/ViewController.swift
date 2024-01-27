@@ -19,11 +19,11 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     
       
     override func viewDidLoad() {
-        checkPermission()
         setup()
     }
     
     public func setup() {
+        checkPermission()
         sessionQueue.async { [unowned self] in
             guard permissionGranted else { return }
             self.setupCaptureSession()
