@@ -60,22 +60,14 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                          
         // Preview layer
 
-        // // display over the full screen
-        // screenRect = UIScreen.main.bounds
-
-         // display filling the top part of the screen
-         screenRect = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height/2)
-        
         previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-        previewLayer.frame = CGRect(x: 0, y: 0, width: screenRect.size.width, height: screenRect.size.height)
+        previewLayer.frame = view.bounds
         previewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill // Fill screen
-        previewLayer.connection?.videoOrientation = .portrait
         
         // Detector
         videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "sampleBufferQueue"))
         captureSession.addOutput(videoOutput)
         
-        videoOutput.connection(with: .video)?.videoOrientation = .portrait
         
         // Updates to UI must be on main queue
         DispatchQueue.main.async { [weak self] in

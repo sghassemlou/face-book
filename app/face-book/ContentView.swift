@@ -12,7 +12,20 @@ struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
 
     var body: some View {
-        HostedViewController().ignoresSafeArea()
+        // rounded rect taking up the top half of the screen with padding
+        GeometryReader{ geo in
+            VStack{
+                HostedViewController().frame(height: geo.size.height * (1/2))
+                Divider()
+                VStack{
+                    Text("bbbbbbbbbb\nbbbbbbbbbb\nbbbbbbbbbb")
+                }.frame(height: geo.size.height * (1/2))
+            }
+        }
+
+
+        
+        // HostedViewController().padding()
     }
 }
 
