@@ -17,14 +17,17 @@ struct PersonViewWrapper: UIViewRepresentable, Identifiable {
         personView = UIImageView(frame: CGRect(x:300, y:500, width: 30, height: 30) )
         personView.backgroundColor = .blue
         personView.contentMode = .scaleAspectFill
+        personView.translatesAutoresizingMaskIntoConstraints = true
         return personView
     }
 
     func updateUIView(_ uiView: UIImageView, context: Context) {
         uiView.frame = CGRect(x:300, y:500, width: 30, height: 30)
         uiView.contentMode = .scaleAspectFill
+        uiView.translatesAutoresizingMaskIntoConstraints = true
         uiView.image = image
         uiView.contentMode = .scaleAspectFill
+        uiView.translatesAutoresizingMaskIntoConstraints = true
     }
 }
 

@@ -201,13 +201,21 @@ class CameraViewController: UIViewController,
             return
         }
         personView.frame = CGRect(x:300, y:500, width: 30, height: 30)
+        personView.translatesAutoresizingMaskIntoConstraints = true
+
         personView.contentMode = .scaleAspectFit
+        personView.translatesAutoresizingMaskIntoConstraints = true
+
         personView.frame = CGRect(x:300, y:500, width: 30, height: 30)
 
         personView.image = image
         personView.frame = CGRect(x:300, y:500, width: 30, height: 30)
 
+        personView.translatesAutoresizingMaskIntoConstraints = true
+
         personView.contentMode = .scaleAspectFit
+        personView.translatesAutoresizingMaskIntoConstraints = true
+
         personView.frame = CGRect(x:300, y:500, width: 30, height: 30)
         
 
