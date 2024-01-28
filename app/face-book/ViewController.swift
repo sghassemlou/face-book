@@ -23,7 +23,7 @@ class CameraViewController: UIViewController,
     var screenRect: CGRect! = nil            // For view dimensions
     var dimensions: CMVideoDimensions! = nil // For underlying camera dimensions
     var frontCam: Bool = false
-
+    
     // Detector
     private var videoOutput = AVCaptureVideoDataOutput()
     var requests = [VNDetectFaceRectanglesRequest]()
@@ -197,11 +197,27 @@ class CameraViewController: UIViewController,
 
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         guard let data = photo.fileDataRepresentation(),
-              let image =  UIImage(data: data)  else {
+              let image =  UIImage(data: data) else {
             return
         }
-        personView.image = image
+        var imageView =  UIImageView(image: image)
+        
+        
+        //preview border
+        imageView.layer.borderWidth = 2
+        imageView.layer.masksToBounds = true
+        imageView.layer.cornerRadius = 5
+        imageView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMinXMinYCorner, .layerMaxXMaxYCorner, .layerMaxXMinYCorner]
+        
+        //previewImage
+        imageView.layer.cornerRadius = 5
+        imageView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMinXMinYCorner, .layerMaxXMaxYCorner, .layerMaxXMinYCorner]
+        imageView.contentMode = .scaleAspectFill
+        imageView.frame = CGRect(x: 0, y: 0, width: view.frame.width/4, height: view.frame.height/4)
+        imageView.layer.name = "photoPreview"
+        outputDisplay.addSubview(imageView)
 
+//      personView = Image(uiImage: image)
         
         
         // @HENRI @SAN @SORAYA here just use

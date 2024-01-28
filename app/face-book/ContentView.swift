@@ -8,24 +8,27 @@
 import SwiftUI
 import SwiftData
 
-var personView : UIImageView = UIImageView()
+var personView = Image("test")
 
-struct PersonViewWrapper: UIViewRepresentable, Identifiable {
-    let id = UUID()
-    var image: UIImage?
-    func makeUIView(context: Context) -> UIImageView {
-        personView.backgroundColor = .blue
-        return personView
-    }
+//struct PersonViewWrapper: UIViewRepresentable, Identifiable {
+//    let id = UUID()
+//    var image: UIImage?
+//    func makeUIView(context: Context) -> UIImageView {
+//        personView.backgroundColor = .blue
+//        return personView
+//    }
+//
+//    func updateUIView(_ uiView: UIImageView, context: Context) {
+//        uiView.image = image
+//    }
+//}
 
-    func updateUIView(_ uiView: UIImageView, context: Context) {
-        uiView.image = image
-    }
-}
+var outputDisplay = UIView()
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     private var audioRecorder = AudioRecorder()
+    
     
     var body: some View {
         // rounded rect taking up the top half of the screen with padding
@@ -63,9 +66,8 @@ struct ContentView: View {
                                 Text("hello world.")
                                     .font(.system(size: 25, weight: .regular, design: .rounded))
 
-                                PersonViewWrapper()
-                                    .frame(width: 200, height: 200)
-                                    .cornerRadius(25.0)
+//                                PersonViewWrapper()
+                                outputDisplay
                             }.frame(width: geo.size.width)
                         }
 
