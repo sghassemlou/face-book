@@ -10,14 +10,14 @@ import SwiftData
 
 var u : UIImageView! = nil
 
-struct ImageViewWrapper: UIViewRepresentable {
+struct PersonViewWrapper: UIViewRepresentable, Identifiable {
+    let id = UUID()
+
     let image: UIImage?
 
     func makeUIView(context: Context) -> UIImageView {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        
-        u = imageView
+        imageView.contentMode = .scaleAspectFill
         return imageView
     }
 
@@ -26,12 +26,16 @@ struct ImageViewWrapper: UIViewRepresentable {
     }
 }
 
+var people: [PersonViewWrapper] = [
+    
+]
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     
     var body: some View {
         // rounded rect taking up the top half of the screen with padding
+        
         GeometryReader{ geo in
             VStack(spacing:10){
                 HostedViewController()
@@ -50,14 +54,28 @@ struct ContentView: View {
                                     .cornerRadius(13)
                                     .imageScale(.medium)
                             }
+                            Button (action: takePic) {
+                                Image(systemName: "camera")
+                                    .frame(width: 44, height: 44)
+                                    .foregroundColor(.white)
+                                    .background(.gray)
+                                    .cornerRadius(13)
+                                    .imageScale(.medium)
+                            }
                         }
                         
                         Text("hello world.")
                             .font(.system(size: 25, weight: .regular, design: .rounded))
                             .frame(width: geo.size.width)
                         
-                        ImageViewWrapper(image: UIImage(named: "my_image"))
-                        
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack {
+                                ForEach(people) { person in
+                                    person
+                                        .frame(width: 200, height: 200)
+                                }
+                            }
+                        }
                     }.frame(width: geo.size.width)
                 }
                 .frame(height: geo.size.height * (1/2))
@@ -66,10 +84,12 @@ struct ContentView: View {
     }
 
     private func toggleCam() {
-//        vc.setupVideoInput()
+        vc.setupVideoInput()
+    }
+    
+    private func takePic() {
         vc.capturedImage = u
         vc.capturePhoto()
-//
     }
 }
 

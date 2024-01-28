@@ -206,6 +206,7 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
 
 extension CameraViewController: AVCapturePhotoCaptureDelegate {
 
+    // first func not used
   func photoOutput(_ captureOutput: AVCapturePhotoOutput, didFinishProcessingPhoto photoSampleBuffer: CMSampleBuffer?, previewPhoto previewPhotoSampleBuffer: CMSampleBuffer?, resolvedSettings: AVCaptureResolvedPhotoSettings, bracketSettings: AVCaptureBracketedStillImageSettings?, error: Error?) {
 
       if let error = error {
@@ -214,11 +215,11 @@ extension CameraViewController: AVCapturePhotoCaptureDelegate {
           if let sampleBuffer = photoSampleBuffer, let previewBuffer = previewPhotoSampleBuffer, let dataImage = AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer: sampleBuffer, previewPhotoSampleBuffer: previewBuffer) {
 
               if let image = UIImage(data: dataImage) {
-                  self.capturedImage.image = image
+//                  self.capturedImage.image = image
+                  people.append(PersonViewWrapper(image: image))
               }
           }
       }
-
   }
 
   @available(iOS 11.0, *)
@@ -229,7 +230,9 @@ extension CameraViewController: AVCapturePhotoCaptureDelegate {
               return
       }
 
-      self.capturedImage.image = image
+//      self.capturedImage.image = image
+      people.append(PersonViewWrapper(image: image))
+      print(people)
   }
 }
 
