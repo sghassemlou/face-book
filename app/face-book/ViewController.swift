@@ -29,8 +29,15 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
         sessionQueue.async { [unowned self] in
             guard permissionGranted else { return }
             self.setupCaptureSession()
-            self.setupLayers()
-            self.setupDetector()
+            
+            DispatchQueue.main.async { [weak self] in
+                self!.detectionLayer = CALayer()
+                self!.detectionLayer.frame = self!.view.frame
+                self!.view.layer.addSublayer(self!.detectionLayer)
+            }
+            
+            self.requests = [VNDetectFaceRectanglesRequest(completionHandler: detectionDidComplete)]
+            
             self.captureSession.startRunning()
         }
     }
@@ -41,9 +48,8 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
             case .authorized:
                 permissionGranted = true
                 
-            // Permission has not been requested yet
+            // Permission has not been requested yet, pause initialization and request it
             case .notDetermined:
-                // request permission
                 sessionQueue.suspend()
                 AVCaptureDevice.requestAccess(for: .video) { [unowned self] granted in
                     self.permissionGranted = granted
@@ -102,10 +108,6 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
         }
     }
     
-    func setupDetector() {
-        self.requests = [VNDetectFaceRectanglesRequest(completionHandler: detectionDidComplete)]
-    }
-    
     func detectionDidComplete(request: VNRequest, error: Error?) {
         DispatchQueue.main.async(execute: {
             if let results = request.results {
@@ -154,14 +156,9 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
         }
     }
     
-    func setupLayers() {
-        DispatchQueue.main.async { [weak self] in
-            self!.detectionLayer = CALayer()
-            self!.detectionLayer.frame = self!.view.frame
-            self!.view.layer.addSublayer(self!.detectionLayer)
-        }
-    }
     
+    // TODO: figure out this function
+    // kept it over from the tutorial code, but we're not using it rn
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .up, options: [:]) // Create handler to perform request on the buffer
