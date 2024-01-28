@@ -200,24 +200,7 @@ class CameraViewController: UIViewController,
               let image =  UIImage(data: data) else {
             return
         }
-//        var imageView =  UIImageView(image: image)
-//        
-//        
-//        //preview border
-//        imageView.layer.borderWidth = 2
-//        imageView.layer.masksToBounds = true
-//        imageView.layer.cornerRadius = 5
-//        imageView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMinXMinYCorner, .layerMaxXMaxYCorner, .layerMaxXMinYCorner]
-//        
-//        //previewImage
-//        imageView.layer.cornerRadius = 5
-//        imageView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMinXMinYCorner, .layerMaxXMaxYCorner, .layerMaxXMinYCorner]
-//        imageView.contentMode = .scaleAspectFill
-//        imageView.frame = CGRect(x: 0, y: 0, width: view.frame.width/4, height: view.frame.height/4)
-//        imageView.layer.name = "photoPreview"
-//        outputDisplay.addSubview(imageView)
-
-//      personView = Image(uiImage: image)
+        
         personView.image = image
         
         

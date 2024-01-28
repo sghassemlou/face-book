@@ -10,6 +10,8 @@ import SwiftData
 
 var personView: UIImageView! = nil
 
+let DISPLAY_PORT_SIZE = 140.0
+
 struct PersonView: UIViewRepresentable{
     var image: UIImage
 
@@ -17,9 +19,9 @@ struct PersonView: UIViewRepresentable{
         let mainView: UIView = UIView()
         let imageView: UIImageView = UIImageView()
         imageView.image = image
-        imageView.frame.size.width = image.size.width
-        imageView.frame.size.height = image.size.height
-        imageView.contentMode = .scaleAspectFit
+        imageView.frame.size.width = DISPLAY_PORT_SIZE
+        imageView.frame.size.height = DISPLAY_PORT_SIZE
+        imageView.contentMode = .scaleAspectFill
         mainView.addSubview(imageView)
         personView = imageView
         return mainView
@@ -73,9 +75,9 @@ struct ContentView: View {
                                 Text("hello world.")
                                     .font(.system(size: 25, weight: .regular, design: .rounded))
 
-                                PersonView(image: UIImage(systemName: "camera")!)
-                                
-                                    
+                                PersonView(image: UIImage(systemName: "faceid")!)
+                                    .frame(width: DISPLAY_PORT_SIZE, height: DISPLAY_PORT_SIZE)
+                                    .cornerRadius(15)
                                 
                             }.frame(width: geo.size.width)
                         }
