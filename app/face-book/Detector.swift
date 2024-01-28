@@ -25,31 +25,16 @@ extension ViewController {
     func extractDetections(_ results: [VNObservation]) {
         detectionLayer.sublayers = nil
         
+        // fall out if we're not intitialized
         if (CGFloat(dimensions.width) == 0 || CGFloat(dimensions.height) == 0 || screenRect.size.width == 0 || screenRect.size.height == 0) { return }
         
-//        // Transformations
-//        let aspect = CGFloat(dimensions.height) / CGFloat(dimensions.width)
-//        var tWidth: CGFloat = 0, tHeight: CGFloat = 0
-//        
-//        if (aspect < screenRect.size.height / screenRect.size.width) {
-//            tWidth = screenRect.size.width
-//            tHeight = screenRect.size.width * aspect
-//        } else {
-//            tWidth = screenRect.size.height / aspect
-//            tHeight = screenRect.size.height
-//        }
-        
         var aspect = CGFloat(dimensions.width) / CGFloat(dimensions.height)
-
         if (dimensions.height > dimensions.width) { aspect = 1.0 / aspect }
-            
         let tWidth = max(screenRect.size.width, screenRect.size.height / aspect)
         let tHeight = max(screenRect.size.height, screenRect.size.width * aspect)
         
         for observation in results {
             guard let faceObservation = observation as? VNFaceObservation else { continue }
-//            let tWidth = max(screenRect.size.width, screenRect.size.height * CGFloat(dimensions.width) / CGFloat(dimensions.height))
-//            let tHeight = max(screenRect.size.height, screenRect.size.width * CGFloat(dimensions.height) / CGFloat(dimensions.width))
             
             let x1 = faceObservation.boundingBox.minY
             let y1 = faceObservation.boundingBox.minX - FUDGE_FACTOR
@@ -62,24 +47,17 @@ extension ViewController {
             let xr = xc + (x2 - xc) * SCALE_FACTOR
             let yl = yc + (y1 - yc) * SCALE_FACTOR
             let yr = yc + (y2 - yc) * SCALE_FACTOR
-                        
-//            let tWidth = max(screenRect.size.width, screenRect.size.height * CGFloat(dimensions.width / dimensions.height))
-//            let tHeight = max(screenRect.size.height, screenRect.size.width * CGFloat(dimensions.height / dimensions.width))
             
-            print("A:", faceObservation.boundingBox.minX + 0.25)
-            print("B:", tWidth)
-            print("C:", screenRect.size.width)
-
-            let transformedBounds = CGRect(
+            let boxLayer = CALayer()
+            boxLayer.frame = CGRect(
                 x: xl * tWidth,
                 y: yl * tHeight,
                 width: (xr - xl) * tWidth,
                 height: (yr - yl) * tHeight
             )
-            
-            let boxLayer = self.drawBoundingBox(transformedBounds)
-            
-
+            boxLayer.borderWidth = 3.0
+            boxLayer.borderColor = CGColor.init(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
+            boxLayer.cornerRadius = 10
             detectionLayer.addSublayer(boxLayer)
         }
     }
@@ -90,15 +68,6 @@ extension ViewController {
             self!.detectionLayer.frame = self!.view.frame
             self!.view.layer.addSublayer(self!.detectionLayer)
         }
-    }
-    
-    func drawBoundingBox(_ bounds: CGRect) -> CALayer {
-        let boxLayer = CALayer()
-        boxLayer.frame = bounds
-        boxLayer.borderWidth = 3.0
-        boxLayer.borderColor = CGColor.init(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
-        boxLayer.cornerRadius = 10
-        return boxLayer
     }
     
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
