@@ -200,7 +200,16 @@ class CameraViewController: UIViewController,
               let image =  UIImage(data: data)  else {
             return
         }
+        personView.contentMode = .scaleAspectFill
         personView.image = image
+        personView.contentMode = .scaleAspectFill
+
+        
+        
+        // @HENRI @SAN @SORAYA here just use
+        // image.pngData()
+        // or
+        // image.jpegData(compressionQuality: ..., )
     }
 }
 
