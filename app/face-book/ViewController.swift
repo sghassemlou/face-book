@@ -118,6 +118,19 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
             }
         })
     }
+    
+    
+    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
+        let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .up, options: [:]) // Create handler to perform request on the buffer
+
+        do {
+            try imageRequestHandler.perform(self.requests) // Schedules vision requests to be performed
+        } catch {
+            print(error)
+        }
+    }
+    
 
     func extractDetections(_ results: [VNObservation]) {
         detectionLayer.sublayers = nil
@@ -161,20 +174,9 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
             boxLayer.borderColor = CGColor.init(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
             boxLayer.cornerRadius = 10
             detectionLayer.addSublayer(boxLayer)
-        }
-    }
 
 
-    // TODO: figure out this function
-    // kept it over from the tutorial code, but we're not using it rn
-    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
-        let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .up, options: [:]) // Create handler to perform request on the buffer
-
-        do {
-            try imageRequestHandler.perform(self.requests) // Schedules vision requests to be performed
-        } catch {
-            print(error)
+            
         }
     }
 }
