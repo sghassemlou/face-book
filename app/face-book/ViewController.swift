@@ -12,7 +12,9 @@ let SCALE_FACTOR_FRONT = 1.9
 
 
 
-class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate {
+class CameraViewController: UIViewController,
+                            AVCaptureVideoDataOutputSampleBufferDelegate,
+                            AVCapturePhotoCaptureDelegate {
     private var permissionGranted = false // Flag for permission
     private let captureSession = AVCaptureSession()
     private let photoOutput = AVCapturePhotoOutput()
@@ -105,11 +107,8 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
 
         guard captureSession.canAddOutput(videoOutput) else { return }
         captureSession.addOutput(videoOutput)
-        print("AAAA")
         guard captureSession.canAddOutput(photoOutput) else { return }
-        print("BBBB")
         captureSession.addOutput(photoOutput)
-        photoOutput.isHighResolutionCaptureEnabled = true
 
         // Updates to UI must be on main queue
         DispatchQueue.main.async { [weak self] in
@@ -117,18 +116,6 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
             self!.screenRect = self!.view.frame
             self!.view.layer.addSublayer(self!.previewLayer)
         }
-    }
-    
-    func capturePhoto() {
-        let photoSettings = AVCapturePhotoSettings()
-        photoSettings.isHighResolutionPhotoEnabled = true
-        
-
-        if let firstAvailablePreviewPhotoPixelFormatTypes = photoSettings.availablePreviewPhotoPixelFormatTypes.first {
-            photoSettings.previewPhotoFormat = [kCVPixelBufferPixelFormatTypeKey as String: firstAvailablePreviewPhotoPixelFormatTypes]
-        }
-
-        photoOutput.capturePhoto(with: photoSettings, delegate: self)
     }
 
     func detectionDidComplete(request: VNRequest, error: Error?) {
@@ -138,8 +125,8 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
             }
         })
     }
-    
-    
+
+
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .up, options: [:]) // Create handler to perform request on the buffer
@@ -150,7 +137,7 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
             print(error)
         }
     }
-    
+
 
     func extractDetections(_ results: [VNObservation]) {
         detectionLayer.sublayers = nil
@@ -197,18 +184,24 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
             capturePhoto()
         }
     }
-}
+    
+    func capturePhoto() {
+        let photoSettings = AVCapturePhotoSettings()
 
-extension CameraViewController: AVCapturePhotoCaptureDelegate {
+        if let firstAvailablePreviewPhotoPixelFormatTypes = photoSettings.availablePreviewPhotoPixelFormatTypes.first {
+            photoSettings.previewPhotoFormat = [kCVPixelBufferPixelFormatTypeKey as String: firstAvailablePreviewPhotoPixelFormatTypes]
+        }
 
-  func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
-      guard let data = photo.fileDataRepresentation(),
-            let image =  UIImage(data: data)  else {
-              return
-      }
+        photoOutput.capturePhoto(with: photoSettings, delegate: self)
+    }
 
-      personView.image = image
-  }
+    func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+        guard let data = photo.fileDataRepresentation(),
+              let image =  UIImage(data: data)  else {
+            return
+        }
+        personView.image = image
+    }
 }
 
 
@@ -224,5 +217,3 @@ struct HostedViewController: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
     }
 }
-
-
