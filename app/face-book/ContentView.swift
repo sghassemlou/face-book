@@ -8,13 +8,16 @@
 import SwiftUI
 import SwiftData
 
+var u : UIImageView! = nil
+
 struct ImageViewWrapper: UIViewRepresentable {
     let image: UIImage?
 
     func makeUIView(context: Context) -> UIImageView {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
-        vc.capturedImage = imageView
+        
+        u = imageView
         return imageView
     }
 
@@ -64,6 +67,7 @@ struct ContentView: View {
 
     private func toggleCam() {
 //        vc.setupVideoInput()
+        vc.capturedImage = u
         vc.capturePhoto()
 //
     }
