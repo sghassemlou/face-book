@@ -33,21 +33,32 @@ extension ViewController {
 //            tHeight = screenRect.size.height
 //        }
         
+        var aspect = CGFloat(dimensions.width) / CGFloat(dimensions.height)
+        // if the way we're displaying things
+        if (dimensions.height > dimensions.width) {
+            aspect = 1.0 / aspect
+        }
+            
+        
         for observation in results {
             guard let faceObservation = observation as? VNFaceObservation else { continue }
 //            let tWidth = max(screenRect.size.width, screenRect.size.height * CGFloat(dimensions.width) / CGFloat(dimensions.height))
 //            let tHeight = max(screenRect.size.height, screenRect.size.width * CGFloat(dimensions.height) / CGFloat(dimensions.width))
             
             let x1 = faceObservation.boundingBox.minY
-            let y1 = faceObservation.boundingBox.minX
+            let y1 = faceObservation.boundingBox.minX - 0.25
             let x2 = faceObservation.boundingBox.maxY
-            let y2 = faceObservation.boundingBox.maxX
+            let y2 = faceObservation.boundingBox.maxX - 0.25
                         
 //            let tWidth = max(screenRect.size.width, screenRect.size.height * CGFloat(dimensions.width / dimensions.height))
 //            let tHeight = max(screenRect.size.height, screenRect.size.width * CGFloat(dimensions.height / dimensions.width))
-            let tWidth = screenRect.size.width
-            let tHeight = screenRect.size.height
-                        
+            let tWidth = max(screenRect.size.width, screenRect.size.height / aspect)
+            let tHeight = max(screenRect.size.height, screenRect.size.width * aspect)
+            
+            print("A:", screenRect.size.height)
+            print("B:", screenRect.size.width * CGFloat(dimensions.height) / CGFloat(dimensions.width))
+            print("C:", screenRect.size.width * CGFloat(dimensions.height) / CGFloat(dimensions.width))
+
             let transformedBounds = CGRect(
                 x: x1 * tWidth,
                 y: y1 * tHeight,
