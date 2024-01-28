@@ -21,7 +21,6 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
     var screenRect: CGRect! = nil            // For view dimensions
     var dimensions: CMVideoDimensions! = nil // For underlying camera dimensions
     var frontCam: Bool = false
-    var capturedImage: UIImageView! = nil
 
     // Detector
     private var videoOutput = AVCaptureVideoDataOutput()
@@ -176,7 +175,7 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
                 x2 = 1 - x2
             }
 
-            var s = frontCam ? SCALE_FACTOR_FRONT : SCALE_FACTOR
+            let s = frontCam ? SCALE_FACTOR_FRONT : SCALE_FACTOR
             let xc = (x1 + x2) / 2
             let yc = (y1 + y2) / 2
             let xl = xc + (x1 - xc) * s
@@ -195,49 +194,20 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
             boxLayer.borderColor = CGColor.init(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
             boxLayer.cornerRadius = 10
             detectionLayer.addSublayer(boxLayer)
-
-
-            
+            capturePhoto()
         }
     }
 }
 
-// MARK: - AVCapturePhotoCaptureDelegate Methods
-
 extension CameraViewController: AVCapturePhotoCaptureDelegate {
 
-    // first func not used
-  func photoOutput(_ captureOutput: AVCapturePhotoOutput, didFinishProcessingPhoto photoSampleBuffer: CMSampleBuffer?, previewPhoto previewPhotoSampleBuffer: CMSampleBuffer?, resolvedSettings: AVCaptureResolvedPhotoSettings, bracketSettings: AVCaptureBracketedStillImageSettings?, error: Error?) {
-
-      if let error = error {
-          print("Error capturing photo: \(error)")
-      } else {
-          if let sampleBuffer = photoSampleBuffer, let previewBuffer = previewPhotoSampleBuffer, let dataImage = AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer: sampleBuffer, previewPhotoSampleBuffer: previewBuffer) {
-
-              if let image = UIImage(data: dataImage) {
-//                  self.capturedImage.image = image
-//                  people.append(PersonViewWrapper(image: image))
-//                  displayPerson.image = image
-                  u.image = image
-              }
-          }
-      }
-  }
-
-  @available(iOS 11.0, *)
   func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
-
       guard let data = photo.fileDataRepresentation(),
             let image =  UIImage(data: data)  else {
               return
       }
 
-//      self.capturedImage.image = image
-//      people.append(PersonViewWrapper(image: image))-
-      u.image = image
-      
-//      displayPerson.image = image
-//      print(people)
+      personView.image = image
   }
 }
 

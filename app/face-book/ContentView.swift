@@ -8,26 +8,21 @@
 import SwiftUI
 import SwiftData
 
-var u : UIImageView = UIImageView()
+var personView : UIImageView = UIImageView()
 
 struct PersonViewWrapper: UIViewRepresentable, Identifiable {
     let id = UUID()
-
     var image: UIImage?
-
     func makeUIView(context: Context) -> UIImageView {
-        let imageView = UIImageView()
-        u = imageView
-        imageView.contentMode = .scaleAspectFill
-        return imageView
+        personView = UIImageView()
+        personView.contentMode = .scaleAspectFit
+        return personView
     }
 
     func updateUIView(_ uiView: UIImageView, context: Context) {
         uiView.image = image
     }
 }
-
-var displayPerson = PersonViewWrapper(image: UIImage())
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
@@ -63,11 +58,17 @@ struct ContentView: View {
                             }
                         }
                         
-                        Text("hello world.")
-                            .font(.system(size: 25, weight: .regular, design: .rounded))
-                            .frame(width: geo.size.width)
-                        
-                        displayPerson
+                        HStack {
+                            VStack{
+                                Text("hello world.")
+                                    .font(.system(size: 25, weight: .regular, design: .rounded))
+                                    
+                                PersonViewWrapper()
+                                    .scaledToFit()
+                                    .frame(width: 200, height: 200)
+                                    .cornerRadius(25.0)
+                            }.frame(width: geo.size.width)
+                        }
                         
                     }.frame(width: geo.size.width)
                 }
@@ -81,7 +82,6 @@ struct ContentView: View {
     }
     
     private func takePic() {
-        vc.capturedImage = u
         vc.capturePhoto()
     }
 }
