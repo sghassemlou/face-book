@@ -200,9 +200,17 @@ class CameraViewController: UIViewController,
               let image =  UIImage(data: data)  else {
             return
         }
-        personView.contentMode = .scaleAspectFill
+        personView.frame = CGRect(x:300, y:500, width: 30, height: 30)
+        personView.contentMode = .scaleAspectFit
+        personView.frame = CGRect(x:300, y:500, width: 30, height: 30)
+
         personView.image = image
-        personView.contentMode = .scaleAspectFill
+        personView.frame = CGRect(x:300, y:500, width: 30, height: 30)
+
+        personView.contentMode = .scaleAspectFit
+        personView.frame = CGRect(x:300, y:500, width: 30, height: 30)
+        
+
 
         
         
