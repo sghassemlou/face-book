@@ -49,15 +49,6 @@ struct ContentView: View {
                                     .imageScale(.medium)
                             }
 
-                            Button (action: takePic) {
-                                Image(systemName: "camera")
-                                    .frame(width: 44, height: 44)
-                                    .foregroundColor(.white)
-                                    .background(.gray)
-                                    .cornerRadius(13)
-                                    .imageScale(.medium)
-                            }
-
                             // Audio recording button
                             Button("Record Audio") {
                                 if audioRecorder.isRecording {
