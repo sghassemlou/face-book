@@ -5,15 +5,7 @@ import UIKit
 extension ViewController {
     
     func setupDetector() {
-        let modelURL = YOLOv3Int8LUT.urlOfModelInThisBundle
-
-        do {
-            let visionModel = try VNCoreMLModel(for: MLModel(contentsOf: modelURL))
-            let recognitions = VNCoreMLRequest(model: visionModel, completionHandler: detectionDidComplete)
-            self.requests = [recognitions]
-        } catch let error {
-            print(error)
-        }
+        self.requests = [VNDetectFaceRectanglesRequest(completionHandler: detectionDidComplete)]
     }
     
     func detectionDidComplete(request: VNRequest, error: Error?) {
@@ -41,23 +33,30 @@ extension ViewController {
 //            tHeight = screenRect.size.height
 //        }
         
-        for observation in results where observation is VNRecognizedObjectObservation {
-            guard let objectObservation = observation as? VNRecognizedObjectObservation else { continue }
+        for observation in results {
+            guard let faceObservation = observation as? VNFaceObservation else { continue }
 //            let tWidth = max(screenRect.size.width, screenRect.size.height * CGFloat(dimensions.width) / CGFloat(dimensions.height))
 //            let tHeight = max(screenRect.size.height, screenRect.size.width * CGFloat(dimensions.height) / CGFloat(dimensions.width))
-                     
-            let tWidth = max(screenRect.size.width, screenRect.size.height * CGFloat(dimensions.width / dimensions.height))
-            let tHeight = max(screenRect.size.height, screenRect.size.width * CGFloat(dimensions.height / dimensions.width))
-            let objectBounds = VNImageRectForNormalizedRect(objectObservation.boundingBox, Int(tWidth), Int(tHeight))
             
+            let x1 = faceObservation.boundingBox.minY
+            let y1 = faceObservation.boundingBox.minX
+            let x2 = faceObservation.boundingBox.maxY
+            let y2 = faceObservation.boundingBox.maxX
+                        
+//            let tWidth = max(screenRect.size.width, screenRect.size.height * CGFloat(dimensions.width / dimensions.height))
+//            let tHeight = max(screenRect.size.height, screenRect.size.width * CGFloat(dimensions.height / dimensions.width))
+            let tWidth = screenRect.size.width
+            let tHeight = screenRect.size.height
+                        
             let transformedBounds = CGRect(
-                x: objectBounds.minX,
-                y: objectBounds.minY,
-                width: objectBounds.maxX - objectBounds.minX,
-                height: objectBounds.maxY - objectBounds.minY
+                x: x1 * tWidth,
+                y: y1 * tHeight,
+                width: (x2 - x1) * tWidth,
+                height: (y2 - y1) * tHeight
             )
             
             let boxLayer = self.drawBoundingBox(transformedBounds)
+            
 
             detectionLayer.addSublayer(boxLayer)
         }

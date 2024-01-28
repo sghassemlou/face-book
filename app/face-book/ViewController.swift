@@ -14,7 +14,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     
     // Detector
     private var videoOutput = AVCaptureVideoDataOutput()
-    var requests = [VNRequest]()
+    var requests = [VNDetectFaceRectanglesRequest]()
     var detectionLayer: CALayer! = nil
     var camera_idx: Int = -1
     
