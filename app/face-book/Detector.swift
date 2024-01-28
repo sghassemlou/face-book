@@ -2,6 +2,12 @@ import Vision
 import AVFoundation
 import UIKit
 
+let FUDGE_FACTOR = 0.21 // there's some offset to one of the transforms I can't quite figure out.
+                        // This compensates for that. Obviously not good for production, but it
+                        // should be fine for a hackathon.
+
+let SCALE_FACTOR = 2.4
+
 extension ViewController {
     
     func setupDetector() {
@@ -34,11 +40,11 @@ extension ViewController {
 //        }
         
         var aspect = CGFloat(dimensions.width) / CGFloat(dimensions.height)
-        // if the way we're displaying things
-        if (dimensions.height > dimensions.width) {
-            aspect = 1.0 / aspect
-        }
+
+        if (dimensions.height > dimensions.width) { aspect = 1.0 / aspect }
             
+        let tWidth = max(screenRect.size.width, screenRect.size.height / aspect)
+        let tHeight = max(screenRect.size.height, screenRect.size.width * aspect)
         
         for observation in results {
             guard let faceObservation = observation as? VNFaceObservation else { continue }
@@ -46,24 +52,29 @@ extension ViewController {
 //            let tHeight = max(screenRect.size.height, screenRect.size.width * CGFloat(dimensions.height) / CGFloat(dimensions.width))
             
             let x1 = faceObservation.boundingBox.minY
-            let y1 = faceObservation.boundingBox.minX - 0.25
+            let y1 = faceObservation.boundingBox.minX - FUDGE_FACTOR
             let x2 = faceObservation.boundingBox.maxY
-            let y2 = faceObservation.boundingBox.maxX - 0.25
+            let y2 = faceObservation.boundingBox.maxX - FUDGE_FACTOR
+            
+            let xc = (x1 + x2) / 2
+            let yc = (y1 + y2) / 2
+            let xl = xc + (x1 - xc) * SCALE_FACTOR
+            let xr = xc + (x2 - xc) * SCALE_FACTOR
+            let yl = yc + (y1 - yc) * SCALE_FACTOR
+            let yr = yc + (y2 - yc) * SCALE_FACTOR
                         
 //            let tWidth = max(screenRect.size.width, screenRect.size.height * CGFloat(dimensions.width / dimensions.height))
 //            let tHeight = max(screenRect.size.height, screenRect.size.width * CGFloat(dimensions.height / dimensions.width))
-            let tWidth = max(screenRect.size.width, screenRect.size.height / aspect)
-            let tHeight = max(screenRect.size.height, screenRect.size.width * aspect)
             
-            print("A:", screenRect.size.height)
-            print("B:", screenRect.size.width * CGFloat(dimensions.height) / CGFloat(dimensions.width))
-            print("C:", screenRect.size.width * CGFloat(dimensions.height) / CGFloat(dimensions.width))
+            print("A:", faceObservation.boundingBox.minX + 0.25)
+            print("B:", tWidth)
+            print("C:", screenRect.size.width)
 
             let transformedBounds = CGRect(
-                x: x1 * tWidth,
-                y: y1 * tHeight,
-                width: (x2 - x1) * tWidth,
-                height: (y2 - y1) * tHeight
+                x: xl * tWidth,
+                y: yl * tHeight,
+                width: (xr - xl) * tWidth,
+                height: (yr - yl) * tHeight
             )
             
             let boxLayer = self.drawBoundingBox(transformedBounds)
@@ -76,7 +87,7 @@ extension ViewController {
     func setupLayers() {
         DispatchQueue.main.async { [weak self] in
             self!.detectionLayer = CALayer()
-            self!.detectionLayer.frame = CGRect(x: 0, y: 0, width: self!.view.frame.size.width, height: self!.view.frame.size.height)
+            self!.detectionLayer.frame = self!.view.frame
             self!.view.layer.addSublayer(self!.detectionLayer)
         }
     }
