@@ -7,7 +7,8 @@ let FUDGE_FACTOR = 0.21 // there's some offset to one of the transforms I can't 
                         // This compensates for that. Obviously not good for production, but it
                         // should be fine for a hackathon.
 
-let SCALE_FACTOR = 2.1
+let SCALE_FACTOR = 3.4
+let SCALE_FACTOR_FRONT = 1.0
 
 class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate {
     private var permissionGranted = false // Flag for permission
@@ -16,38 +17,40 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
     private var previewLayer = AVCaptureVideoPreviewLayer()
     var screenRect: CGRect! = nil            // For view dimensions
     var dimensions: CMVideoDimensions! = nil // For underlying camera dimensions
-    
+    var frontCam: Bool = false
+
     // Detector
     private var videoOutput = AVCaptureVideoDataOutput()
     var requests = [VNDetectFaceRectanglesRequest]()
     var detectionLayer: CALayer! = nil
-    var camera_idx: Int = -1
-    
-      
+
+    var camera_idx: Int = -1 // increment when pressing camera button
+
+
     override func viewDidLoad() {
         checkPermission()
         sessionQueue.async { [unowned self] in
             guard permissionGranted else { return }
             self.setupCaptureSession()
-            
+
             DispatchQueue.main.async { [weak self] in
                 self!.detectionLayer = CALayer()
                 self!.detectionLayer.frame = self!.view.frame
                 self!.view.layer.addSublayer(self!.detectionLayer)
             }
-            
+
             self.requests = [VNDetectFaceRectanglesRequest(completionHandler: detectionDidComplete)]
-            
+
             self.captureSession.startRunning()
         }
     }
-    
+
     func checkPermission() {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
             // Permission has been granted before
             case .authorized:
                 permissionGranted = true
-                
+
             // Permission has not been requested yet, pause initialization and request it
             case .notDetermined:
                 sessionQueue.suspend()
@@ -55,14 +58,14 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
                     self.permissionGranted = granted
                     self.sessionQueue.resume()
                 }
-                    
+
             default:
                 permissionGranted = false
         }
     }
-    
+
     func setupVideoInput() {
-        
+
         let devices = AVCaptureDevice.DiscoverySession(deviceTypes: [
             .builtInDualCamera, .builtInTripleCamera, .builtInTelephotoCamera, .builtInDualWideCamera,
             /*.builtInUltraWideCamera,*/ .builtInWideAngleCamera
@@ -71,12 +74,14 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
         camera_idx = (camera_idx + 1) % devices.count
         let videoDevice = devices[camera_idx]
         dimensions = videoDevice.activeFormat.formatDescription.dimensions
-        
-        
+        print(videoDevice.activeFormat)
+
         print("initialising with camera: ", videoDevice.localizedName)
 
+        frontCam = videoDevice.position == .front
+
         guard let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice) else { return }
-        
+
         for input in captureSession.inputs {
             captureSession.removeInput(input)
         }
@@ -84,18 +89,18 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
         guard captureSession.canAddInput(videoDeviceInput) else { return }
         captureSession.addInput(videoDeviceInput)
     }
-    
+
     func setupCaptureSession() {
         // Camera input
         setupVideoInput()
-                         
+
         // Preview layer
         previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         previewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
-        
+
         // Detector
         videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "sampleBufferQueue"))
-        
+
         guard captureSession.canAddOutput(videoOutput) else { return }
         captureSession.addOutput(videoOutput)
 
@@ -107,7 +112,7 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
             print(self!.view.layer.sublayers!)
         }
     }
-    
+
     func detectionDidComplete(request: VNRequest, error: Error?) {
         DispatchQueue.main.async(execute: {
             if let results = request.results {
@@ -115,33 +120,38 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
             }
         })
     }
-    
+
     func extractDetections(_ results: [VNObservation]) {
         detectionLayer.sublayers = nil
-        
+
         // fall out if we're not intitialized
         if (CGFloat(dimensions.width) == 0 || CGFloat(dimensions.height) == 0 || screenRect.size.width == 0 || screenRect.size.height == 0) { return }
-        
+
         var aspect = CGFloat(dimensions.width) / CGFloat(dimensions.height)
         if (dimensions.height > dimensions.width) { aspect = 1.0 / aspect }
         let tWidth = max(screenRect.size.width, screenRect.size.height / aspect)
         let tHeight = max(screenRect.size.height, screenRect.size.width * aspect)
-        
+
         for observation in results {
             guard let faceObservation = observation as? VNFaceObservation else { continue }
-            
-            let x1 = faceObservation.boundingBox.minY
+
+            var x1 = faceObservation.boundingBox.minY
             let y1 = faceObservation.boundingBox.minX - FUDGE_FACTOR
-            let x2 = faceObservation.boundingBox.maxY
+            var x2 = faceObservation.boundingBox.maxY
             let y2 = faceObservation.boundingBox.maxX - FUDGE_FACTOR
-            
+            if (frontCam) { // mirror'd video compensation
+                x1 = 1 - x1
+                x2 = 1 - x2
+            }
+
+            var s = frontCam ? SCALE_FACTOR : SCALE_FACTOR_FRONT
             let xc = (x1 + x2) / 2
             let yc = (y1 + y2) / 2
-            let xl = xc + (x1 - xc) * SCALE_FACTOR
-            let xr = xc + (x2 - xc) * SCALE_FACTOR
-            let yl = yc + (y1 - yc) * SCALE_FACTOR
-            let yr = yc + (y2 - yc) * SCALE_FACTOR
-            
+            let xl = xc + (x1 - xc) * s
+            let xr = xc + (x2 - xc) * s
+            let yl = yc + (y1 - yc) * s
+            let yr = yc + (y2 - yc) * s
+
             let boxLayer = CALayer()
             boxLayer.frame = CGRect(
                 x: xl * tWidth,
@@ -155,8 +165,8 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
             detectionLayer.addSublayer(boxLayer)
         }
     }
-    
-    
+
+
     // TODO: figure out this function
     // kept it over from the tutorial code, but we're not using it rn
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
