@@ -94,7 +94,7 @@ def compare_faces(sourceFile, targetFile):
     imageTarget.close()
     return len(response['FaceMatches'])
 
-#def check_face_in_collection(face_id, collection_id):
+def check_face_in_collection(face_id, collection_id):
     session = boto3.Session(profile_name=os.getenv('PROFILE_NAME'))
     client = session.client('rekognition')
 
@@ -105,7 +105,7 @@ def compare_faces(sourceFile, targetFile):
     else:
         return False  # Face not found in the collection
 
-#def add_faces_to_collection_new(bucket, photo, collection_id):
+def add_faces_to_collection_new(bucket, photo, collection_id):
     session = boto3.Session(profile_name=os.getenv('PROFILE_NAME'))
     client = session.client('rekognition')
 
@@ -131,20 +131,56 @@ def compare_faces(sourceFile, targetFile):
 
     return len(response['FaceDetails'])
 
-def search_collection():
+
+def search_collection(sourceFile,collection_id):
+    session = boto3.Session(profile_name=os.getenv('PROFILE_NAME'))
+    client = session.client('rekognition')
+
+    imageSource = open(sourceFile, 'rb')
+    response = client.search_faces_by_image(
+        CollectionId= collection_id,
+        Image={
+            'Bytes': imageSource.read(),
+            #'S3Object': { #if you want to add it to the bucket fill this shit out
+            #    'Bucket': bucket,
+            #    'Name': 'name string',
+            #    'Version': 'version string'
+            #}
+        },
+        MaxFaces=123,
+        FaceMatchThreshold=0.9,
+    )
+
+    for faceMatch in response['FaceMatches']:
+        position = faceMatch['Face']['BoundingBox']
+        similarity = str(faceMatch['Similarity'])
+        print('The face at ' +
+              str(position['Left']) + ' ' +
+              str(position['Top']) +
+              ' matches with ' + similarity + '% confidence')
+
+    imageSource.close()
+
 def main():
 
     bucket = os.getenv('BUCKET_NAME')
     collection_id = 'meryl-collection'
     photo_name = 'Meryl'
-    upload_image_to_s3(file_path='Meryl2.png', bucket_name='face-book-faces',object_name=photo_name)
+    #ADD STUFF TO BUCKET (DOESNT MATTER WHAT YOU THROW IN HERE)
+    #upload_image_to_s3(file_path='Meryl2.png', bucket_name='face-book-faces',object_name=photo_name)
     #upload_image_to_s3(file_path='RandomWoman1.png', bucket_name='face-book-faces', object_name='RandomSteamWoman')
-    create_collection(collection_id) #uncomment if doesnt allready exist
-    indexed_faces_count = add_faces_to_collection(bucket, photo_name, collection_id)
-    print("Faces indexed count: " + str(indexed_faces_count))
-    compare_faces('Meryl.png', 'RandomMan1.png')
-    #add_faces_to_collection_new(bucket,'RandomSteamWoman',collection_id)
 
+    #CREATE COLLECTION
+    #create_collection(collection_id) #uncomment if doesnt allready exist
+
+    #ADD FACES TO COLLECTION(WHEN YOU GET NAME OF FACE)
+    #indexed_faces_count = add_faces_to_collection(bucket, photo_name, collection_id)
+    #print("Faces indexed count: " + str(indexed_faces_count))
+
+    #SEARCH COLLECTION FOR NEW FACE
+    search_collection(sourceFile='Meryl4.png',collection_id=collection_id) #can edit this function to take bucket photos instead
+
+    # compare_faces('Meryl.png', 'RandomMan1.png')
 
 if __name__ == "__main__":
     main()
