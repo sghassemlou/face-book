@@ -1,3 +1,10 @@
+//
+//  AudioRecorder.swift
+//  face-book
+//
+//  Created by Henri Lemoine on 2024-01-27.
+//
+
 import AVFoundation
 
 class AudioRecorder: NSObject, AVAudioRecorderDelegate {
@@ -35,11 +42,12 @@ class AudioRecorder: NSObject, AVAudioRecorderDelegate {
             recordingSession.requestRecordPermission() { [unowned self] allowed in
                 DispatchQueue.main.async {
                     if allowed {
+                        print("Permission to record granted. Starting recording...")
                         self.audioRecorder?.record()
                     } else {
                         // Handle the case where permission is denied
                         // Print error message
-                        print("Permission to record denied")
+                        print("Permission to record denied.")
                     }
                 }
             }
@@ -50,6 +58,7 @@ class AudioRecorder: NSObject, AVAudioRecorderDelegate {
 
     func stopRecording() {
         audioRecorder?.stop()
+        print("Recording over.")
     }
 
     private func getDocumentsDirectory() -> URL {
