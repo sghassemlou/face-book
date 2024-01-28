@@ -8,20 +8,27 @@
 import SwiftUI
 import SwiftData
 
-var personView = Image("test")
+var personView: UIImageView! = nil
 
-//struct PersonViewWrapper: UIViewRepresentable, Identifiable {
-//    let id = UUID()
-//    var image: UIImage?
-//    func makeUIView(context: Context) -> UIImageView {
-//        personView.backgroundColor = .blue
-//        return personView
-//    }
-//
-//    func updateUIView(_ uiView: UIImageView, context: Context) {
-//        uiView.image = image
-//    }
-//}
+struct PersonView: UIViewRepresentable{
+    var image: UIImage
+
+    func makeUIView(context: Context) -> UIView {
+        let mainView: UIView = UIView()
+        let imageView: UIImageView = UIImageView()
+        imageView.image = image
+        imageView.frame.size.width = image.size.width
+        imageView.frame.size.height = image.size.height
+        imageView.contentMode = .scaleAspectFit
+        mainView.addSubview(imageView)
+        personView = imageView
+        return mainView
+    }
+
+    func updateUIView(_ uiView: UIView, context: Context) {
+    }
+}
+
 
 var outputDisplay = UIView()
 
@@ -66,8 +73,10 @@ struct ContentView: View {
                                 Text("hello world.")
                                     .font(.system(size: 25, weight: .regular, design: .rounded))
 
-//                                PersonViewWrapper()
-                                outputDisplay
+                                PersonView(image: UIImage(systemName: "camera")!)
+                                
+                                    
+                                
                             }.frame(width: geo.size.width)
                         }
 
