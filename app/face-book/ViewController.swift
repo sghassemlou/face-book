@@ -27,6 +27,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         sessionQueue.async { [unowned self] in
             guard permissionGranted else { return }
             self.setupCaptureSession()
+            self.setupLayers()
+            self.setupDetector()
             self.captureSession.startRunning()
         }
     }
@@ -93,6 +95,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         // Updates to UI must be on main queue
         DispatchQueue.main.async { [weak self] in
             self!.previewLayer.frame = self!.view.frame
+            self!.screenRect = self!.view.frame
             self!.view.layer.addSublayer(self!.previewLayer)
             print(self!.view.layer.sublayers!)
         }
