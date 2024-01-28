@@ -181,6 +181,7 @@ class CameraViewController: UIViewController,
             boxLayer.borderColor = CGColor.init(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
             boxLayer.cornerRadius = 10
             detectionLayer.addSublayer(boxLayer)
+            photoCrop = faceObservation.boundingBox
             capturePhoto()
         }
     }
@@ -194,14 +195,23 @@ class CameraViewController: UIViewController,
 
         photoOutput.capturePhoto(with: photoSettings, delegate: self)
     }
+    
+    var photoCrop: CGRect! = nil
 
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
-        guard let data = photo.fileDataRepresentation(),
-              let image =  UIImage(data: data) else {
-            return
-        }
+        guard let data = photo.fileDataRepresentation() else { return }
+
+        // crop to correct subsection
+        let image = UIImage(data: data)
+        let image1 = image?.cgImage?.cropping(to: CGRect(
+            x: CGFloat(photoCrop.minX) * CGFloat(dimensions.width),
+            y: CGFloat(photoCrop.minY) * CGFloat(dimensions.height),
+            width: CGFloat(photoCrop.width) * CGFloat(dimensions.width),
+            height: CGFloat(photoCrop.height) * CGFloat(dimensions.height)
+        ))
+    
         
-        personView.image = image
+        personView.image = UIImage(cgImage: image1!)
         
         
         // @HENRI @SAN @SORAYA here just use
