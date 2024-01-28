@@ -8,15 +8,16 @@
 import SwiftUI
 import SwiftData
 
-var u : UIImageView! = nil
+var u : UIImageView = UIImageView()
 
 struct PersonViewWrapper: UIViewRepresentable, Identifiable {
     let id = UUID()
 
-    let image: UIImage?
+    var image: UIImage?
 
     func makeUIView(context: Context) -> UIImageView {
         let imageView = UIImageView()
+        u = imageView
         imageView.contentMode = .scaleAspectFill
         return imageView
     }
@@ -26,9 +27,7 @@ struct PersonViewWrapper: UIViewRepresentable, Identifiable {
     }
 }
 
-var people: [PersonViewWrapper] = [
-    
-]
+var displayPerson = PersonViewWrapper(image: UIImage())
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
@@ -68,14 +67,8 @@ struct ContentView: View {
                             .font(.system(size: 25, weight: .regular, design: .rounded))
                             .frame(width: geo.size.width)
                         
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack {
-                                ForEach(people) { person in
-                                    person
-                                        .frame(width: 200, height: 200)
-                                }
-                            }
-                        }
+                        displayPerson
+                        
                     }.frame(width: geo.size.width)
                 }
                 .frame(height: geo.size.height * (1/2))

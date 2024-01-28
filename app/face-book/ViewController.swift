@@ -216,7 +216,9 @@ extension CameraViewController: AVCapturePhotoCaptureDelegate {
 
               if let image = UIImage(data: dataImage) {
 //                  self.capturedImage.image = image
-                  people.append(PersonViewWrapper(image: image))
+//                  people.append(PersonViewWrapper(image: image))
+//                  displayPerson.image = image
+                  u.image = image
               }
           }
       }
@@ -231,8 +233,11 @@ extension CameraViewController: AVCapturePhotoCaptureDelegate {
       }
 
 //      self.capturedImage.image = image
-      people.append(PersonViewWrapper(image: image))
-      print(people)
+//      people.append(PersonViewWrapper(image: image))-
+      u.image = image
+      
+//      displayPerson.image = image
+//      print(people)
   }
 }
 
