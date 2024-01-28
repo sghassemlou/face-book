@@ -10,7 +10,8 @@ let FUDGE_FACTOR = 0.21 // there's some offset to one of the transforms I can't 
 let SCALE_FACTOR = 2.4
 let SCALE_FACTOR_FRONT = 1.9
 
-
+var last_time_photo_taken = 0.0
+let MIN_PHOTO_INTERVAL = 0.3 // seconds (increase when testing with aws)
 
 class CameraViewController: UIViewController,
                             AVCaptureVideoDataOutputSampleBufferDelegate,
@@ -182,7 +183,13 @@ class CameraViewController: UIViewController,
             boxLayer.cornerRadius = 10
             detectionLayer.addSublayer(boxLayer)
             photoCrop = faceObservation.boundingBox
-            capturePhoto()
+            
+            // only take and upload a photo if more than MIN_PHOTO_INTERVAL has passed
+            let current_time = CACurrentMediaTime()
+            if (current_time - last_time_photo_taken > MIN_PHOTO_INTERVAL) {
+                last_time_photo_taken = current_time
+                capturePhoto()
+            }
         }
     }
 
