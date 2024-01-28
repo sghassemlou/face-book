@@ -14,11 +14,10 @@ struct ContentView: View {
     var body: some View {
         // rounded rect taking up the top half of the screen with padding
         GeometryReader{ geo in
-            VStack{
+            VStack(spacing:10){
                 HostedViewController()
                     .frame(height: geo.size.height * (1/2))
                     .cornerRadius(25.0)
-                    .padding()
 
             
                 GeometryReader{ geo1 in
@@ -26,12 +25,11 @@ struct ContentView: View {
                         HStack (alignment: .top){
                             Button (action: toggleCam) {
                                 Image(systemName: "camera.rotate.fill")
-                                    .frame(width: 52, height: 52)
+                                    .frame(width: 44, height: 44)
                                     .foregroundColor(.white)
                                     .background(.gray)
-                                    .cornerRadius(15)
-                                    .imageScale(.large)
-                                
+                                    .cornerRadius(13)
+                                    .imageScale(.medium)
                             }
                         }
                         
@@ -41,12 +39,9 @@ struct ContentView: View {
                             
                     }.frame(width: geo.size.width)
                 }
-                .background(Color.red)
                 .frame(height: geo.size.height * (1/2))
-                .padding()
-
             }
-        }
+        }.padding(.horizontal)
     }
 
     private func toggleCam() {
