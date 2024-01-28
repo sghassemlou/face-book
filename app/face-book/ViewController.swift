@@ -202,16 +202,20 @@ class CameraViewController: UIViewController,
         guard let data = photo.fileDataRepresentation() else { return }
 
         // crop to correct subsection
-        let image = UIImage(data: data)
-        let image1 = image?.cgImage?.cropping(to: CGRect(
-            x: CGFloat(photoCrop.minX) * CGFloat(dimensions.width),
-            y: CGFloat(photoCrop.minY) * CGFloat(dimensions.height),
-            width: CGFloat(photoCrop.width) * CGFloat(dimensions.width),
-            height: CGFloat(photoCrop.height) * CGFloat(dimensions.height)
+        let xc = (photoCrop.minX + photoCrop.maxX) / 2
+        let yc = 1.0 - (photoCrop.minY + photoCrop.maxY) / 2
+        let w = max(photoCrop.maxY - photoCrop.minY, photoCrop.maxX - photoCrop.minX) * (frontCam ? SCALE_FACTOR_FRONT : SCALE_FACTOR)
+
+        let cgImage: CGImage! = UIImage(data: data)?.cgImage?.cropping(to: CGRect(
+            x: (xc - w / 2) * CGFloat(dimensions.width),
+            y: (yc - w / 2) * CGFloat(dimensions.height),
+            width: w * CGFloat(dimensions.width),
+            height: w * CGFloat(dimensions.height)
         ))
-    
+                
+        let image = UIImage(cgImage: cgImage!, scale: 1.0, orientation: .right)
         
-        personView.image = UIImage(cgImage: image1!)
+        personView.image = image
         
         
         // @HENRI @SAN @SORAYA here just use

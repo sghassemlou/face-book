@@ -61,16 +61,7 @@ struct ContentView: View {
                             }.frame(width: geo.size.width)
                         }
                         
-                        HStack (alignment: .top) {
-                            Button (action: toggleCam) {
-                                Image(systemName: "camera.rotate.fill")
-                                    .frame(width: 44, height: 44)
-                                    .foregroundColor(.white)
-                                    .background(.gray)
-                                    .cornerRadius(13)
-                                    .imageScale(.medium)
-                            }
-
+                        HStack (alignment: .bottom) {
                             // Audio recording button
                             Button("Record Audio") {
                                 if audioRecorder.isRecording {
@@ -79,9 +70,19 @@ struct ContentView: View {
                                     audioRecorder.startRecording()
                                 }
                             }
+                            
+                            Button (action: toggleCam) {
+                                Image(systemName: "camera.rotate.fill")
+                                    .frame(width: 44, height: 44)
+                                    .foregroundColor(.white)
+                                    .background(.gray)
+                                    .cornerRadius(13)
+                                    .imageScale(.medium)
+                            }
+                            
                         }
 
-                    }.frame(width: geo.size.width)
+                    }.frame(width: geo.size.width, height: geo.size.height * (1/2))
                 }.frame(height: geo.size.height * (1/2))
                 
                 HostedViewController()
