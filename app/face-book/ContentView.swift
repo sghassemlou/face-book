@@ -43,13 +43,24 @@ struct ContentView: View {
         // rounded rect taking up the top half of the screen with padding
         GeometryReader { geo in
             VStack(spacing:10){
-                HostedViewController()
-                    .frame(height: geo.size.height * (1/2))
-                    .cornerRadius(25.0)
+                
 
 
                 GeometryReader{ geo1 in
-                    VStack (alignment: .leading) {
+                    VStack (alignment: .trailing) {
+
+                        HStack {
+                            VStack{
+                                Text("name goes here.")
+                                    .font(.system(size: 25, weight: .regular, design: .rounded))
+
+                                PersonView(image: UIImage(systemName: "faceid")!)
+                                    .frame(width: DISPLAY_PORT_SIZE, height: DISPLAY_PORT_SIZE)
+                                    .cornerRadius(15)
+                                
+                            }.frame(width: geo.size.width)
+                        }
+                        
                         HStack (alignment: .top) {
                             Button (action: toggleCam) {
                                 Image(systemName: "camera.rotate.fill")
@@ -70,21 +81,12 @@ struct ContentView: View {
                             }
                         }
 
-                        HStack {
-                            VStack{
-                                Text("hello world.")
-                                    .font(.system(size: 25, weight: .regular, design: .rounded))
-
-                                PersonView(image: UIImage(systemName: "faceid")!)
-                                    .frame(width: DISPLAY_PORT_SIZE, height: DISPLAY_PORT_SIZE)
-                                    .cornerRadius(15)
-                                
-                            }.frame(width: geo.size.width)
-                        }
-
                     }.frame(width: geo.size.width)
-                }
-                .frame(height: geo.size.height * (1/2))
+                }.frame(height: geo.size.height * (1/2))
+                
+                HostedViewController()
+                    .frame(height: geo.size.height * (1/2))
+                    .cornerRadius(25.0)
             }
         }.padding(.horizontal)
     }
