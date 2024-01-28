@@ -7,8 +7,8 @@ let FUDGE_FACTOR = 0.21 // there's some offset to one of the transforms I can't 
                         // This compensates for that. Obviously not good for production, but it
                         // should be fine for a hackathon.
 
-let SCALE_FACTOR = 3.4
-let SCALE_FACTOR_FRONT = 1.0
+let SCALE_FACTOR = 2.4
+let SCALE_FACTOR_FRONT = 1.9
 
 class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate {
     private var permissionGranted = false // Flag for permission
@@ -74,7 +74,6 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
         camera_idx = (camera_idx + 1) % devices.count
         let videoDevice = devices[camera_idx]
         dimensions = videoDevice.activeFormat.formatDescription.dimensions
-        print(videoDevice.activeFormat)
 
         print("initialising with camera: ", videoDevice.localizedName)
 
@@ -109,7 +108,6 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
             self!.previewLayer.frame = self!.view.frame
             self!.screenRect = self!.view.frame
             self!.view.layer.addSublayer(self!.previewLayer)
-            print(self!.view.layer.sublayers!)
         }
     }
 
@@ -144,7 +142,7 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
                 x2 = 1 - x2
             }
 
-            var s = frontCam ? SCALE_FACTOR : SCALE_FACTOR_FRONT
+            var s = frontCam ? SCALE_FACTOR_FRONT : SCALE_FACTOR
             let xc = (x1 + x2) / 2
             let yc = (y1 + y2) / 2
             let xl = xc + (x1 - xc) * s
