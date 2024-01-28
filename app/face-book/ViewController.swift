@@ -10,14 +10,18 @@ let FUDGE_FACTOR = 0.21 // there's some offset to one of the transforms I can't 
 let SCALE_FACTOR = 2.4
 let SCALE_FACTOR_FRONT = 1.9
 
+
+
 class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate {
     private var permissionGranted = false // Flag for permission
     private let captureSession = AVCaptureSession()
+    private let photoOutput = AVCapturePhotoOutput()
     private let sessionQueue = DispatchQueue(label: "sessionQueue")
     private var previewLayer = AVCaptureVideoPreviewLayer()
     var screenRect: CGRect! = nil            // For view dimensions
     var dimensions: CMVideoDimensions! = nil // For underlying camera dimensions
     var frontCam: Bool = false
+    var capturedImage: UIImageView! = nil
 
     // Detector
     private var videoOutput = AVCaptureVideoDataOutput()
@@ -102,6 +106,11 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
 
         guard captureSession.canAddOutput(videoOutput) else { return }
         captureSession.addOutput(videoOutput)
+        print("AAAA")
+        guard captureSession.canAddOutput(photoOutput) else { return }
+        print("BBBB")
+        captureSession.addOutput(photoOutput)
+        photoOutput.isHighResolutionCaptureEnabled = true
 
         // Updates to UI must be on main queue
         DispatchQueue.main.async { [weak self] in
@@ -109,6 +118,18 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
             self!.screenRect = self!.view.frame
             self!.view.layer.addSublayer(self!.previewLayer)
         }
+    }
+    
+    func capturePhoto() {
+        let photoSettings = AVCapturePhotoSettings()
+        photoSettings.isHighResolutionPhotoEnabled = true
+        
+
+        if let firstAvailablePreviewPhotoPixelFormatTypes = photoSettings.availablePreviewPhotoPixelFormatTypes.first {
+            photoSettings.previewPhotoFormat = [kCVPixelBufferPixelFormatTypeKey as String: firstAvailablePreviewPhotoPixelFormatTypes]
+        }
+
+        photoOutput.capturePhoto(with: photoSettings, delegate: self)
     }
 
     func detectionDidComplete(request: VNRequest, error: Error?) {
@@ -181,6 +202,38 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
     }
 }
 
+// MARK: - AVCapturePhotoCaptureDelegate Methods
+
+extension CameraViewController: AVCapturePhotoCaptureDelegate {
+
+  func photoOutput(_ captureOutput: AVCapturePhotoOutput, didFinishProcessingPhoto photoSampleBuffer: CMSampleBuffer?, previewPhoto previewPhotoSampleBuffer: CMSampleBuffer?, resolvedSettings: AVCaptureResolvedPhotoSettings, bracketSettings: AVCaptureBracketedStillImageSettings?, error: Error?) {
+
+      if let error = error {
+          print("Error capturing photo: \(error)")
+      } else {
+          if let sampleBuffer = photoSampleBuffer, let previewBuffer = previewPhotoSampleBuffer, let dataImage = AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer: sampleBuffer, previewPhotoSampleBuffer: previewBuffer) {
+
+              if let image = UIImage(data: dataImage) {
+                  self.capturedImage.image = image
+              }
+          }
+      }
+
+  }
+
+  @available(iOS 11.0, *)
+  func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+
+      guard let data = photo.fileDataRepresentation(),
+            let image =  UIImage(data: data)  else {
+              return
+      }
+
+      self.capturedImage.image = image
+  }
+}
+
+
 // global variable marking the currently active view controller
 var vc: CameraViewController! = nil;
 
@@ -193,3 +246,5 @@ struct HostedViewController: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
     }
 }
+
+

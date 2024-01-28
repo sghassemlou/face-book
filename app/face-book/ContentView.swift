@@ -8,6 +8,22 @@
 import SwiftUI
 import SwiftData
 
+struct ImageViewWrapper: UIViewRepresentable {
+    let image: UIImage?
+
+    func makeUIView(context: Context) -> UIImageView {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        vc.capturedImage = imageView
+        return imageView
+    }
+
+    func updateUIView(_ uiView: UIImageView, context: Context) {
+        uiView.image = image
+    }
+}
+
+
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     
@@ -36,7 +52,9 @@ struct ContentView: View {
                         Text("hello world.")
                             .font(.system(size: 25, weight: .regular, design: .rounded))
                             .frame(width: geo.size.width)
-                            
+                        
+                        ImageViewWrapper(image: UIImage(named: "my_image"))
+                        
                     }.frame(width: geo.size.width)
                 }
                 .frame(height: geo.size.height * (1/2))
@@ -45,7 +63,9 @@ struct ContentView: View {
     }
 
     private func toggleCam() {
-        vc.setupVideoInput()
+//        vc.setupVideoInput()
+        vc.capturePhoto()
+//
     }
 }
 
