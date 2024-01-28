@@ -26,11 +26,11 @@ struct PersonViewWrapper: UIViewRepresentable, Identifiable {
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
-
+    private var audioRecorder = AudioRecorder()
+    
     var body: some View {
         // rounded rect taking up the top half of the screen with padding
-
-        GeometryReader{ geo in
+        GeometryReader { geo in
             VStack(spacing:10){
                 HostedViewController()
                     .frame(height: geo.size.height * (1/2))
@@ -39,7 +39,7 @@ struct ContentView: View {
 
                 GeometryReader{ geo1 in
                     VStack (alignment: .leading) {
-                        HStack (alignment: .top){
+                        HStack (alignment: .top) {
                             Button (action: toggleCam) {
                                 Image(systemName: "camera.rotate.fill")
                                     .frame(width: 44, height: 44)
@@ -48,6 +48,7 @@ struct ContentView: View {
                                     .cornerRadius(13)
                                     .imageScale(.medium)
                             }
+
                             Button (action: takePic) {
                                 Image(systemName: "camera")
                                     .frame(width: 44, height: 44)
@@ -55,6 +56,15 @@ struct ContentView: View {
                                     .background(.gray)
                                     .cornerRadius(13)
                                     .imageScale(.medium)
+                            }
+
+                            // Audio recording button
+                            Button("Record Audio") {
+                                if audioRecorder.isRecording {
+                                    audioRecorder.stopRecording()
+                                } else {
+                                    audioRecorder.startRecording()
+                                }
                             }
                         }
 
@@ -82,6 +92,8 @@ struct ContentView: View {
     }
 }
 
-#Preview {
-    ContentView()
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
 }
