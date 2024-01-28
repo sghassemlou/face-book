@@ -14,20 +14,12 @@ struct PersonViewWrapper: UIViewRepresentable, Identifiable {
     let id = UUID()
     var image: UIImage?
     func makeUIView(context: Context) -> UIImageView {
-        personView = UIImageView(frame: CGRect(x:300, y:500, width: 30, height: 30) )
         personView.backgroundColor = .blue
-        personView.contentMode = .scaleAspectFill
-        personView.translatesAutoresizingMaskIntoConstraints = true
         return personView
     }
 
     func updateUIView(_ uiView: UIImageView, context: Context) {
-        uiView.frame = CGRect(x:300, y:500, width: 30, height: 30)
-        uiView.contentMode = .scaleAspectFill
-        uiView.translatesAutoresizingMaskIntoConstraints = true
         uiView.image = image
-        uiView.contentMode = .scaleAspectFill
-        uiView.translatesAutoresizingMaskIntoConstraints = true
     }
 }
 
@@ -72,7 +64,7 @@ struct ContentView: View {
                                     .font(.system(size: 25, weight: .regular, design: .rounded))
 
                                 PersonViewWrapper()
-//                                    .frame(width: 200, height: 200)
+                                    .frame(width: 200, height: 200)
                                     .cornerRadius(25.0)
                             }.frame(width: geo.size.width)
                         }
