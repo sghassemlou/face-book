@@ -27,13 +27,27 @@ extension ViewController {
     func extractDetections(_ results: [VNObservation]) {
         detectionLayer.sublayers = nil
         
+        if (CGFloat(dimensions.width) == 0 || CGFloat(dimensions.height) == 0 || screenRect.size.width == 0 || screenRect.size.height == 0) { return }
+        
+//        // Transformations
+//        let aspect = CGFloat(dimensions.height) / CGFloat(dimensions.width)
+//        var tWidth: CGFloat = 0, tHeight: CGFloat = 0
+//        
+//        if (aspect < screenRect.size.height / screenRect.size.width) {
+//            tWidth = screenRect.size.width
+//            tHeight = screenRect.size.width * aspect
+//        } else {
+//            tWidth = screenRect.size.height / aspect
+//            tHeight = screenRect.size.height
+//        }
+        
         for observation in results where observation is VNRecognizedObjectObservation {
             guard let objectObservation = observation as? VNRecognizedObjectObservation else { continue }
-            
-            // Transformations
+//            let tWidth = max(screenRect.size.width, screenRect.size.height * CGFloat(dimensions.width) / CGFloat(dimensions.height))
+//            let tHeight = max(screenRect.size.height, screenRect.size.width * CGFloat(dimensions.height) / CGFloat(dimensions.width))
+                     
             let tWidth = max(screenRect.size.width, screenRect.size.height * CGFloat(dimensions.width / dimensions.height))
             let tHeight = max(screenRect.size.height, screenRect.size.width * CGFloat(dimensions.height / dimensions.width))
-            
             let objectBounds = VNImageRectForNormalizedRect(objectObservation.boundingBox, Int(tWidth), Int(tHeight))
             
             let transformedBounds = CGRect(
