@@ -26,17 +26,17 @@ struct PersonViewWrapper: UIViewRepresentable, Identifiable {
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
-    
+
     var body: some View {
         // rounded rect taking up the top half of the screen with padding
-        
+
         GeometryReader{ geo in
             VStack(spacing:10){
                 HostedViewController()
                     .frame(height: geo.size.height * (1/2))
                     .cornerRadius(25.0)
 
-            
+
                 GeometryReader{ geo1 in
                     VStack (alignment: .leading) {
                         HStack (alignment: .top){
@@ -57,19 +57,19 @@ struct ContentView: View {
                                     .imageScale(.medium)
                             }
                         }
-                        
+
                         HStack {
                             VStack{
                                 Text("hello world.")
                                     .font(.system(size: 25, weight: .regular, design: .rounded))
-                                    
+
                                 PersonViewWrapper()
                                     .scaledToFit()
                                     .frame(width: 200, height: 200)
                                     .cornerRadius(25.0)
                             }.frame(width: geo.size.width)
                         }
-                        
+
                     }.frame(width: geo.size.width)
                 }
                 .frame(height: geo.size.height * (1/2))
@@ -79,10 +79,6 @@ struct ContentView: View {
 
     private func toggleCam() {
         vc.setupVideoInput()
-    }
-    
-    private func takePic() {
-        vc.capturePhoto()
     }
 }
 

@@ -184,7 +184,7 @@ class CameraViewController: UIViewController,
             capturePhoto()
         }
     }
-    
+
     func capturePhoto() {
         let photoSettings = AVCapturePhotoSettings()
 
