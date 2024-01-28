@@ -9,7 +9,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     private let captureSession = AVCaptureSession()
     private let sessionQueue = DispatchQueue(label: "sessionQueue")
     private var previewLayer = AVCaptureVideoPreviewLayer()
-    var screenRect: CGRect! = nil // For view dimensions
+    var screenRect: CGRect! = nil            // For view dimensions
+    var dimensions: CMVideoDimensions! = nil // For underlying camera dimensions
     
     // Detector
     private var videoOutput = AVCaptureVideoDataOutput()
@@ -19,10 +20,6 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     
       
     override func viewDidLoad() {
-        setup()
-    }
-    
-    public func setup() {
         checkPermission()
         sessionQueue.async { [unowned self] in
             guard permissionGranted else { return }
@@ -41,18 +38,15 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 
             // Permission has not been requested yet
             case .notDetermined:
-                requestPermission()
+                // request permission
+                sessionQueue.suspend()
+                AVCaptureDevice.requestAccess(for: .video) { [unowned self] granted in
+                    self.permissionGranted = granted
+                    self.sessionQueue.resume()
+                }
                     
             default:
                 permissionGranted = false
-            }
-    }
-    
-    func requestPermission() {
-        sessionQueue.suspend()
-        AVCaptureDevice.requestAccess(for: .video) { [unowned self] granted in
-            self.permissionGranted = granted
-            self.sessionQueue.resume()
         }
     }
     
@@ -65,6 +59,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         if devices.isEmpty { return }
         camera_idx = (camera_idx + 1) % devices.count
         let videoDevice = devices[camera_idx]
+        dimensions = videoDevice.activeFormat.formatDescription.dimensions
+        
         
         print("initialising with camera: ", videoDevice.localizedName)
 
@@ -102,6 +98,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
 }
 
+// global variable marking the currently active view controller
 var vc: ViewController! = nil;
 
 struct HostedViewController: UIViewControllerRepresentable {

@@ -5,7 +5,6 @@ import UIKit
 extension ViewController {
     
     func setupDetector() {
-//        let modelURL = Bundle.main.url(forResource: "YOLOv3TinyInt8LUT", withExtension: "mlmodelc")
         let modelURL = YOLOv3Int8LUT.urlOfModelInThisBundle
 
         do {
@@ -32,8 +31,17 @@ extension ViewController {
             guard let objectObservation = observation as? VNRecognizedObjectObservation else { continue }
             
             // Transformations
-            let objectBounds = VNImageRectForNormalizedRect(objectObservation.boundingBox, Int(screenRect.size.width), Int(screenRect.size.height))
-            let transformedBounds = CGRect(x: objectBounds.minX, y: screenRect.size.height - objectBounds.maxY, width: objectBounds.maxX - objectBounds.minX, height: objectBounds.maxY - objectBounds.minY)
+            let tWidth = max(screenRect.size.width, screenRect.size.height * CGFloat(dimensions.width / dimensions.height))
+            let tHeight = max(screenRect.size.height, screenRect.size.width * CGFloat(dimensions.height / dimensions.width))
+            
+            let objectBounds = VNImageRectForNormalizedRect(objectObservation.boundingBox, Int(tWidth), Int(tHeight))
+            
+            let transformedBounds = CGRect(
+                x: objectBounds.minX,
+                y: objectBounds.minY,
+                width: objectBounds.maxX - objectBounds.minX,
+                height: objectBounds.maxY - objectBounds.minY
+            )
             
             let boxLayer = self.drawBoundingBox(transformedBounds)
 
@@ -49,18 +57,12 @@ extension ViewController {
         }
     }
     
-    func updateLayers() {
-        DispatchQueue.main.async { [weak self] in
-            self!.detectionLayer?.frame = CGRect(x: 0, y: 0, width: self!.view.frame.size.width, height: self!.view.frame.size.height)
-        }
-    }
-    
     func drawBoundingBox(_ bounds: CGRect) -> CALayer {
         let boxLayer = CALayer()
         boxLayer.frame = bounds
         boxLayer.borderWidth = 3.0
-        boxLayer.borderColor = CGColor.init(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
-        boxLayer.cornerRadius = 4
+        boxLayer.borderColor = CGColor.init(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
+        boxLayer.cornerRadius = 10
         return boxLayer
     }
     
