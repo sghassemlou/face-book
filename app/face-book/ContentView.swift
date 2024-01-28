@@ -8,6 +8,22 @@
 import SwiftUI
 import SwiftData
 
+var personView : UIImageView = UIImageView()
+
+struct PersonViewWrapper: UIViewRepresentable, Identifiable {
+    let id = UUID()
+    var image: UIImage?
+    func makeUIView(context: Context) -> UIImageView {
+        personView = UIImageView()
+        personView.contentMode = .scaleAspectFit
+        return personView
+    }
+
+    func updateUIView(_ uiView: UIImageView, context: Context) {
+        uiView.image = image
+    }
+}
+
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     private var audioRecorder = AudioRecorder()
@@ -20,32 +36,43 @@ struct ContentView: View {
                     .frame(height: geo.size.height * (1/2))
                     .cornerRadius(25.0)
 
-                VStack (alignment: .leading) {
-                    HStack (alignment: .top) {
-                        Button (action: toggleCam) {
-                            Image(systemName: "camera.rotate.fill")
-                                .frame(width: 44, height: 44)
-                                .foregroundColor(.white)
-                                .background(.gray)
-                                .cornerRadius(13)
-                                .imageScale(.medium)
-                        }
 
-                        // Audio recording button
-                        Button("Record Audio") {
-                            if audioRecorder.isRecording {
-                                audioRecorder.stopRecording()
-                            } else {
-                                audioRecorder.startRecording()
+                GeometryReader{ geo1 in
+                    VStack (alignment: .leading) {
+                        HStack (alignment: .top) {
+                            Button (action: toggleCam) {
+                                Image(systemName: "camera.rotate.fill")
+                                    .frame(width: 44, height: 44)
+                                    .foregroundColor(.white)
+                                    .background(.gray)
+                                    .cornerRadius(13)
+                                    .imageScale(.medium)
+                            }
+
+                            // Audio recording button
+                            Button("Record Audio") {
+                                if audioRecorder.isRecording {
+                                    audioRecorder.stopRecording()
+                                } else {
+                                    audioRecorder.startRecording()
+                                }
                             }
                         }
-                    }
-                    
-                    Text("hello world.")
-                        .font(.system(size: 25, weight: .regular, design: .rounded))
-                        .frame(width: geo.size.width)
+
+                        HStack {
+                            VStack{
+                                Text("hello world.")
+                                    .font(.system(size: 25, weight: .regular, design: .rounded))
+
+                                PersonViewWrapper()
+                                    .scaledToFit()
+                                    .frame(width: 200, height: 200)
+                                    .cornerRadius(25.0)
+                            }.frame(width: geo.size.width)
+                        }
+
+                    }.frame(width: geo.size.width)
                 }
-                .frame(width: geo.size.width)
                 .frame(height: geo.size.height * (1/2))
             }
         }.padding(.horizontal)

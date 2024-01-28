@@ -10,9 +10,14 @@ let FUDGE_FACTOR = 0.21 // there's some offset to one of the transforms I can't 
 let SCALE_FACTOR = 2.4
 let SCALE_FACTOR_FRONT = 1.9
 
-class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate {
+
+
+class CameraViewController: UIViewController,
+                            AVCaptureVideoDataOutputSampleBufferDelegate,
+                            AVCapturePhotoCaptureDelegate {
     private var permissionGranted = false // Flag for permission
     private let captureSession = AVCaptureSession()
+    private let photoOutput = AVCapturePhotoOutput()
     private let sessionQueue = DispatchQueue(label: "sessionQueue")
     private var previewLayer = AVCaptureVideoPreviewLayer()
     var screenRect: CGRect! = nil            // For view dimensions
@@ -102,6 +107,8 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
 
         guard captureSession.canAddOutput(videoOutput) else { return }
         captureSession.addOutput(videoOutput)
+        guard captureSession.canAddOutput(photoOutput) else { return }
+        captureSession.addOutput(photoOutput)
 
         // Updates to UI must be on main queue
         DispatchQueue.main.async { [weak self] in
@@ -118,8 +125,8 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
             }
         })
     }
-    
-    
+
+
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .up, options: [:]) // Create handler to perform request on the buffer
@@ -130,7 +137,7 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
             print(error)
         }
     }
-    
+
 
     func extractDetections(_ results: [VNObservation]) {
         detectionLayer.sublayers = nil
@@ -155,7 +162,7 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
                 x2 = 1 - x2
             }
 
-            var s = frontCam ? SCALE_FACTOR_FRONT : SCALE_FACTOR
+            let s = frontCam ? SCALE_FACTOR_FRONT : SCALE_FACTOR
             let xc = (x1 + x2) / 2
             let yc = (y1 + y2) / 2
             let xl = xc + (x1 - xc) * s
@@ -174,12 +181,29 @@ class CameraViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
             boxLayer.borderColor = CGColor.init(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
             boxLayer.cornerRadius = 10
             detectionLayer.addSublayer(boxLayer)
-
-
-            
+            capturePhoto()
         }
     }
+
+    func capturePhoto() {
+        let photoSettings = AVCapturePhotoSettings()
+
+        if let firstAvailablePreviewPhotoPixelFormatTypes = photoSettings.availablePreviewPhotoPixelFormatTypes.first {
+            photoSettings.previewPhotoFormat = [kCVPixelBufferPixelFormatTypeKey as String: firstAvailablePreviewPhotoPixelFormatTypes]
+        }
+
+        photoOutput.capturePhoto(with: photoSettings, delegate: self)
+    }
+
+    func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+        guard let data = photo.fileDataRepresentation(),
+              let image =  UIImage(data: data)  else {
+            return
+        }
+        personView.image = image
+    }
 }
+
 
 // global variable marking the currently active view controller
 var vc: CameraViewController! = nil;
