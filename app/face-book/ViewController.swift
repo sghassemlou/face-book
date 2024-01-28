@@ -58,7 +58,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         
         let devices = AVCaptureDevice.DiscoverySession(deviceTypes: [
             .builtInDualCamera, .builtInTripleCamera, .builtInTelephotoCamera, .builtInDualWideCamera,
-            .builtInUltraWideCamera, .builtInWideAngleCamera
+            /*.builtInUltraWideCamera,*/ .builtInWideAngleCamera
         ], mediaType: .video, position: .unspecified).devices
         if devices.isEmpty { return }
         camera_idx = (camera_idx + 1) % devices.count
